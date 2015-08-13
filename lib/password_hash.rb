@@ -48,8 +48,34 @@ module PasswordHash
   private
 
   def self.hash(password, salt, iterations, size, algorithm)
-    digest = OpenSSL::Digest.new(algorithm)
-    pbkdf2 = OpenSSL::PKCS5.pbkdf2_hmac(password, salt, iterations, size, digest)
+    pbkdf2 = self.kdf(password, salt, iterations, size)
     Base64.strict_encode64(pbkdf2)
+  end
+
+  def self.kdf(password, salt, iterations, size)
+    OpenSSL::PKCS5::pbkdf2_hmac(
+        password,
+        salt,
+        iterations,
+        size,
+        OpenSSL::Digest::SHA512.new,
+    )
+  end
+
+end
+
+begin
+  OpenSSL::PKCS5::pbkdf2_hmac("","",2,512,OpenSSL::Digest::SHA512.new)
+rescue NotImplementedError
+  module PasswordHash
+    def self.kdf(password, salt, iterations, size)
+      PBKDF2.new(
+          password: password,
+          salt: salt,
+          iterations: iterations,
+          key_length: 512,
+          hash_function: OpenSSL::Digest::SHA512,
+      ).bin_string
+    end
   end
 end

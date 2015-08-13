@@ -88,6 +88,9 @@ gem "kgio"
 # Used to generate logstash friendly log files
 gem "logstasher"
 
+# Gem for Openssl pbdkf2_hmac fallback
+gem "pbkdf2"
+
 # Gems useful for development
 group :development do
   gem "vendorer"
