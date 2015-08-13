@@ -73,7 +73,7 @@ rescue NotImplementedError
           password: password,
           salt: salt,
           iterations: iterations,
-          key_length: 512,
+          key_length: size,
           hash_function: OpenSSL::Digest::SHA512,
       ).bin_string
     end
